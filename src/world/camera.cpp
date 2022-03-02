@@ -80,14 +80,26 @@ const float4x4 cg::world::camera::get_view_matrix() const
 #ifdef DX12
 const DirectX::XMMATRIX cg::world::camera::get_dxm_view_matrix() const
 {
-	THROW_ERROR("Not implemented yet");
-	return DirectX::XMMatrixIdentity();
+	DirectX::FXMVECTOR  eye_position{
+		position.x,position.y, position.z};
+	float3 at = position + get_direction();
+	DirectX::FXMVECTOR eye_direction{
+			at.x, at.y, at.z
+//			get_direction().x, get_direction().y, get_direction().z
+	};
+	DirectX::FXMVECTOR up_direction{
+			get_up().x, get_up().y, get_up().z
+	};
+	return DirectX::XMMatrixLookAtRH(
+			eye_position,
+			eye_direction,
+			up_direction
+			);
 }
 
 const DirectX::XMMATRIX cg::world::camera::get_dxm_projection_matrix() const
 {
-	THROW_ERROR("Not implemented yet");
-	return DirectX::XMMatrixIdentity();
+	return DirectX::XMMatrixPerspectiveFovRH(angle_of_view, aspect_ratio, z_near, z_far);
 }
 #endif
 
